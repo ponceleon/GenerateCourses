@@ -541,13 +541,14 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
     );   
 
     const data = await response.json();
- 
+    
     // Extraer la respuesta correctamente según la documentación oficial
     const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'No response';
     // return new Response(JSON.stringify({ reply }), { status: 200 });
     return res.json({
       success: true,
-      reply
+      reply,
+      metadata: data
     });
 
   } catch (error) {
