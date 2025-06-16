@@ -417,7 +417,7 @@ app.post('/api/gemini/generate', authenticateToken, async (req, res) => {
 
 
         request_json: req.body,
-        headers_recieved: "header de salida",
+        headers_received: "header de salida",
         response_LLM_json: geminiSdkResponse
       };
 
@@ -553,7 +553,7 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
       userdata: user ? user : "Desconocido",
 
       // env: "Creacion de leccion",
-      description: "Creacion de leccion",
+      description: "Pregunta al chat",
       status: 'success',
 
       url: "/api/gemini/chat",
@@ -561,7 +561,7 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
       headers_sended: "header de entrada",
 
       request_json: req.body,
-      headers_recieved: "header de salida",
+      headers_received: "header de salida",
       response_LLM_json: generatedContent
   }
 
@@ -651,7 +651,7 @@ Usa formato Markdown con encabezados, listas, código y otros elementos de forma
         headers_sended: "header de entrada",
 
         request_json: req.body,
-        headers_recieved: "header de salida",
+        headers_received: "header de salida",
         response_LLM_json: generatedContent
     }
 
