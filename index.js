@@ -499,7 +499,7 @@ app.get('/api/health', (req, res) => {
 
 app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, user } = req.body;
 
     if (!message) {
       return res.status(400).json({
@@ -541,7 +541,32 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
     );   
 
     const data = await response.json();
-    
+    const generatedContent = data.candidates[0].content.parts[0].text
+    let token = 123
+    const logData = {
+      modelo: data.modelVersion,
+
+      tokens_de_entrada: data.usageMetadata ? data.usageMetadata.promptTokenCount : "No disponible",
+      tokens_de_salida: data.usageMetadata ? data.usageMetadata.candidatesTokenCount : "No disponible",
+
+      user: user.id ? user.id : "Desconocido",
+      userdata: user ? user : "Desconocido",
+
+      // env: "Creacion de leccion",
+      description: "Creacion de leccion",
+      status: 'success',
+
+      url: "/api/gemini/chat",
+
+      headers_sended: "header de entrada",
+
+      request_json: req.body,
+      headers_recieved: "header de salida",
+      response_LLM_json: generatedContent
+  }
+
+  logs.logGeminiAPI(logData,token)
+
     // Extraer la respuesta correctamente según la documentación oficial
     const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'No response';
     // return new Response(JSON.stringify({ reply }), { status: 200 });
