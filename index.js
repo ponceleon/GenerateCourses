@@ -604,24 +604,62 @@ app.post('/api/gemini/generate-lesson-content', authenticateToken, async (req, r
     const lessonTitle = context.lessonData?.titulo || context.lessonData;
     const moduleTitle = context.moduleTitle;
     const courseTitle = context.currentCourse?.titulo || context.courseId;
-    const prompt = `Eres un instructor experto. Genera contenido educativo completo y detallado para una lección.
+//     const prompt = `Eres un instructor experto. Genera contenido educativo completo y detallado para una lección.
 
-**Información de la lección:**
-- Título de la lección: "${lessonTitle}"
-- Módulo: "${moduleTitle}"
-- Curso: "${courseTitle}"
+// **Información de la lección:**
+// - Título de la lección: "${lessonTitle}"
+// - Módulo: "${moduleTitle}"
+// - Curso: "${courseTitle}"
 
-**Instrucciones:**
-Crea contenido educativo en formato Markdown que incluya:
-- Introducción y objetivos de la lección
-- Explicaciones conceptuales claras
-- Ejemplos prácticos (incluye código si es relevante)
-- Puntos clave o resumen
-- Ejercicios o actividades sugeridas (si aplica)
+// **Instrucciones:**
+// Crea contenido educativo en formato Markdown que incluya:
+// - Introducción y objetivos de la lección
+// - Explicaciones conceptuales claras
+// - Ejemplos prácticos (incluye código si es relevante)
+// - Puntos clave o resumen
+// - Ejercicios o actividades sugeridas (si aplica)
 
-El contenido debe ser didáctico, bien estructurado y apropiado para el nivel del curso.
-Usa formato Markdown con encabezados, listas, código y otros elementos de formato.`;
+// El contenido debe ser didáctico, bien estructurado y apropiado para el nivel del curso.
+// Usa formato Markdown con encabezados, listas, código y otros elementos de formato.`;
 
+const prompt = `Eres un instructor experto en creación de contenido educativo. Genera una lección completa basada en los siguientes parámetros, siguiendo estrictamente las instrucciones de formato:
+
+**Título de la lección:** \${lessonTitle}
+**Módulo:** \${moduleTitle}
+**Curso:** \${courseTitle}
+
+**Instrucciones estrictas de formato:**
+1. NUNCA uses Markdown (triple acento grave) para el texto normal
+2. SOLO usa bloques de código con triple acento grave cuando sea necesario mostrar ejemplos de programación
+3. No incluyas títulos o subtítulos con símbolos Markdown (##, ###)
+4. Usa texto plano con saltos de línea para la estructura
+
+**Estructura requerida:**
+Introducción:
+- Explica el propósito de la lección
+- Enumera los objetivos de aprendizaje claramente
+
+Contenido principal:
+- Explicaciones conceptuales detalladas
+- Ejemplos prácticos (usando \`\`\`solo para bloques de código\`\`\`)
+- Diagramas o analogías cuando sean útiles
+
+Resumen:
+- Puntos clave de la lección
+- Conexiones con el módulo y curso
+
+Actividades prácticas:
+- Ejercicios sugeridos
+- Preguntas de reflexión
+- Recursos para profundizar
+
+**Estilo requerido:**
+- Lenguaje claro y didáctico
+- Párrafos bien estructurados
+- Ejemplos relevantes al nivel del curso
+- Terminología técnica explicada cuando sea necesario
+
+Recuerda: solo texto plano, excepto para bloques de código específicos.`;
     const genAI = await initializeGeminiAPI();
     const response = await genAI.models.generateContent({
       model: "gemini-2.0-flash",
