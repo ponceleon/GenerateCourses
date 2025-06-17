@@ -664,8 +664,6 @@ app.post('/api/gemini/generate-lesson-content', authenticateToken, async (req, r
 
 const prompt = `Eres un instructor experto en creación de contenido educativo. Genera una lección completa basada en estos parámetros:
 
-
-
 **Instrucciones CRÍTICAS:**
 1. Para texto normal: NO USES MARKDOWN (nada de \`\`\`, o formatos md)
 2. Para código: SIEMPRE usa \`\`\`language (ej. \`\`\`js) alrededor del código
@@ -673,15 +671,16 @@ const prompt = `Eres un instructor experto en creación de contenido educativo. 
    - Saltos de línea dobles para párrafos
    - Guiones (-) para listas
    - Usa # para denotar titulos principales ejemplo '# Titulo1'
-   - Usa ## para denotar subtitulos en el texto '## Subtitulo1'
-   - Usa ### para denotar mini subtitulos de los subtitulos o anotaciones '### MiniSubtitulo1'
+   - Usa ## para denotar subtitulos Principales en el texto '## Subtitulo1'
+   - Usa ### para denotar mini subtitulos o anotaciones '### MiniSubtitulo1'
+   - Ten cuidado de no dejar ningun subtitulo si alguna de las notaciones anterior si son subtitulos dentro de otro subtitulo usa como prioridad el ###
    - Negritas con ** para énfasis
 
 **ESTRUCTURA REQUERIDA:**
 
-#TITULO:   \${lessonTitle}
-##MODULO:   \${moduleTitle}
-##CURSO:    \${courseTitle}
+# \${lessonTitle}
+###MODULO:   \${moduleTitle}
+###CURSO:    \${courseTitle}
 
 ## INTRODUCCIÓN
 - Propósito claro de la lección
