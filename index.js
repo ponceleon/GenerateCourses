@@ -622,44 +622,87 @@ app.post('/api/gemini/generate-lesson-content', authenticateToken, async (req, r
 // El contenido debe ser didáctico, bien estructurado y apropiado para el nivel del curso.
 // Usa formato Markdown con encabezados, listas, código y otros elementos de formato.`;
 
-const prompt = `Eres un instructor experto en creación de contenido educativo. Genera una lección completa basada en los siguientes parámetros, siguiendo estrictamente las instrucciones de formato:
+// const prompt = `Eres un instructor experto en creación de contenido educativo. Genera una lección completa basada en los siguientes parámetros, siguiendo estrictamente las instrucciones de formato:
 
-**Título de la lección:** \${lessonTitle}
+// **Título de la lección:** \${lessonTitle}
+// **Módulo:** \${moduleTitle}
+// **Curso:** \${courseTitle}
+
+// **Instrucciones estrictas de formato:**
+// 1. NUNCA uses Markdown (triple acento grave) para el texto normal
+// 2. SOLO usa bloques de código con triple acento grave cuando sea necesario mostrar ejemplos de programación
+// 3. Usa títulos o subtítulos con símbolos segun su # , ## y ###
+// 4. Usa texto plano con saltos de línea para la estructura
+
+// **Estructura requerida:**
+// Introducción:
+// - Explica el propósito de la lección
+// - Enumera los objetivos de aprendizaje claramente
+
+// Contenido principal:
+// - Explicaciones conceptuales detalladas
+// - Ejemplos prácticos (usando \`\`\`solo para bloques de código\`\`\`)
+// - Diagramas o analogías cuando sean útiles
+
+// Resumen:
+// - Puntos clave de la lección
+// - Conexiones con el módulo y curso
+
+// Actividades prácticas:
+// - Ejercicios sugeridos
+// - Preguntas de reflexión
+// - Recursos para profundizar
+
+// **Estilo requerido:**
+// - Lenguaje claro y didáctico
+// - Párrafos bien estructurados
+// - Ejemplos relevantes al nivel del curso
+// - Terminología técnica explicada cuando sea necesario
+
+// Recuerda: solo texto plano, excepto para bloques de código específicos.`;
+
+const prompt = `Eres un instructor experto en creación de contenido educativo. Genera una lección completa basada en estos parámetros:
+
+**Título:** \${lessonTitle}
 **Módulo:** \${moduleTitle}
 **Curso:** \${courseTitle}
 
-**Instrucciones estrictas de formato:**
-1. NUNCA uses Markdown (triple acento grave) para el texto normal
-2. SOLO usa bloques de código con triple acento grave cuando sea necesario mostrar ejemplos de programación
-3. No incluyas títulos o subtítulos con símbolos Markdown (##, ###)
-4. Usa texto plano con saltos de línea para la estructura
+**Instrucciones CRÍTICAS:**
+1. Para texto normal: NO USES MARKDOWN (nada de \`\`\`, ##, o formatos md)
+2. Para código: SIEMPRE usa \`\`\`language (ej. \`\`\`js) alrededor del código
+3. Estructura visual con:
+   - Saltos de línea dobles para párrafos
+   - Guiones (-) para listas
+   - MAYÚSCULAS para títulos principales
+   - Negritas con ** para énfasis
 
-**Estructura requerida:**
-Introducción:
-- Explica el propósito de la lección
-- Enumera los objetivos de aprendizaje claramente
+**ESTRUCTURA REQUERIDA:**
 
-Contenido principal:
-- Explicaciones conceptuales detalladas
-- Ejemplos prácticos (usando \`\`\`solo para bloques de código\`\`\`)
-- Diagramas o analogías cuando sean útiles
+INTRODUCCIÓN
+- Propósito claro de la lección
+- Objetivos de aprendizaje enumerados
 
-Resumen:
-- Puntos clave de la lección
-- Conexiones con el módulo y curso
+CONTENIDO PRINCIPAL
+Explicaciones detalladas con:
+- Analogías claras
+- Ejemplos prácticos (usar \`\`\` cuando sea código)
+- Diagramas conceptuales descritos en texto
 
-Actividades prácticas:
-- Ejercicios sugeridos
+RESUMEN
+- Puntos clave en lista
+- Relación con el módulo
+
+ACTIVIDADES
+- Ejercicios prácticos
 - Preguntas de reflexión
-- Recursos para profundizar
+- Recursos adicionales
 
-**Estilo requerido:**
-- Lenguaje claro y didáctico
-- Párrafos bien estructurados
-- Ejemplos relevantes al nivel del curso
-- Terminología técnica explicada cuando sea necesario
+**ESTILO:**
+- Lenguaje profesional pero accesible
+- Párrafos breves (3-4 líneas máximo)
+- Términos técnicos explicados
+- Ejemplos relevantes al nivel`;
 
-Recuerda: solo texto plano, excepto para bloques de código específicos.`;
     const genAI = await initializeGeminiAPI();
     const response = await genAI.models.generateContent({
       model: "gemini-2.0-flash",
