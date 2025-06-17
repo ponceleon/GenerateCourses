@@ -671,8 +671,8 @@ const prompt = `Eres un instructor experto en creación de contenido educativo. 
    - Saltos de línea dobles para párrafos
    - Guiones (-) para listas
    - Usa # para denotar titulos principales ejemplo '# Titulo1'
-   - Usa ## para denotar subtitulos Principales en el texto '## Subtitulo1'
-   - Usa ### para denotar subtitulos dentro de otros subtitulos sean tipo '##' o '###' '### MiniSubtitulo1'
+   - Usa ## para denotar subtitulos en el texto '## Subtitulo1'
+   - Usa ### para denotar subtitulos pequeños en el texto '### SubtituloPequeño1' generalmente se usan para sub-secciones dentro de un subtitulo tipo ##
    - Negritas con ** para énfasis en cosas importantes que quieres resaltar
 
 **ESTRUCTURA REQUERIDA:**
