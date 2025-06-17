@@ -672,15 +672,14 @@ const prompt = `Eres un instructor experto en creación de contenido educativo. 
    - Guiones (-) para listas
    - Usa # para denotar titulos principales ejemplo '# Titulo1'
    - Usa ## para denotar subtitulos Principales en el texto '## Subtitulo1'
-   - Usa ### para denotar mini subtitulos o anotaciones '### MiniSubtitulo1'
-   - Ten cuidado de no dejar ningun subtitulo si alguna de las notaciones anterior si son subtitulos dentro de otro subtitulo usa como prioridad el ###
-   - Negritas con ** para énfasis
+   - Usa ### para denotar subtitulos dentro de otros subtitulos sean tipo '##' o '###' '### MiniSubtitulo1'
+   - Negritas con ** para énfasis en cosas importantes que quieres resaltar
 
 **ESTRUCTURA REQUERIDA:**
 
 # \${lessonTitle}
-###MODULO:   \${moduleTitle}
-###CURSO:    \${courseTitle}
+### MODULO:   \${moduleTitle}
+### CURSO:    \${courseTitle}
 
 ## INTRODUCCIÓN
 - Propósito claro de la lección
