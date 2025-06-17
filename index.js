@@ -604,6 +604,7 @@ app.post('/api/gemini/generate-lesson-content', authenticateToken, async (req, r
     const lessonTitle = context.lessonData?.titulo || context.lessonData;
     const moduleTitle = context.moduleTitle;
     const courseTitle = context.currentCourse?.titulo || context.courseId;
+
 //     const prompt = `Eres un instructor experto. Genera contenido educativo completo y detallado para una lección.
 
 // **Información de la lección:**
@@ -663,45 +664,48 @@ app.post('/api/gemini/generate-lesson-content', authenticateToken, async (req, r
 
 const prompt = `Eres un instructor experto en creación de contenido educativo. Genera una lección completa basada en estos parámetros:
 
-**Título:** \${lessonTitle}
-**Módulo:** \${moduleTitle}
-**Curso:** \${courseTitle}
+
 
 **Instrucciones CRÍTICAS:**
-1. Para texto normal: NO USES MARKDOWN (nada de \`\`\`, ##, o formatos md)
+1. Para texto normal: NO USES MARKDOWN (nada de \`\`\`, o formatos md)
 2. Para código: SIEMPRE usa \`\`\`language (ej. \`\`\`js) alrededor del código
 3. Estructura visual con:
    - Saltos de línea dobles para párrafos
    - Guiones (-) para listas
-   - MAYÚSCULAS para títulos principales
+   - Usa # para denotar titulos principales ejemplo '# Titulo1'
+   - Usa ## para denotar subtitulos en el texto '## Subtitulo1'
+   - Usa ### para denotar mini subtitulos de los subtitulos o anotaciones '### MiniSubtitulo1'
    - Negritas con ** para énfasis
 
 **ESTRUCTURA REQUERIDA:**
 
-INTRODUCCIÓN
+#TITULO:   \${lessonTitle}
+##MODULO:   \${moduleTitle}
+##CURSO:    \${courseTitle}
+
+## INTRODUCCIÓN
 - Propósito claro de la lección
 - Objetivos de aprendizaje enumerados
 
-CONTENIDO PRINCIPAL
-Explicaciones detalladas con:
-- Analogías claras
+## CONTENIDO PRINCIPAL
+- Explicaciones conceptuales detalladas
 - Ejemplos prácticos (usar \`\`\` cuando sea código)
-- Diagramas conceptuales descritos en texto
+- Diagramas o analogías cuando sean útiles
 
-RESUMEN
-- Puntos clave en lista
+## RESUMEN
+- Puntos clave de la lección
 - Relación con el módulo
 
-ACTIVIDADES
+## ACTIVIDADES
 - Ejercicios prácticos
 - Preguntas de reflexión
 - Recursos adicionales
 
 **ESTILO:**
-- Lenguaje profesional pero accesible
-- Párrafos breves (3-4 líneas máximo)
+- Lenguaje claro y didáctico
+- Párrafos bien estructurados
 - Términos técnicos explicados
-- Ejemplos relevantes al nivel`;
+- Ejemplos relevantes al nivel del curso`;
 
     const genAI = await initializeGeminiAPI();
     const response = await genAI.models.generateContent({
