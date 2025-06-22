@@ -605,23 +605,23 @@ app.post('/api/gemini/generate-lesson-content', authenticateToken, async (req, r
     const moduleTitle = context.moduleTitle;
     const courseTitle = context.currentCourse?.titulo || context.courseId;
 
-//     const prompt = `Eres un instructor experto. Genera contenido educativo completo y detallado para una lección.
+    const prompt = `Eres un instructor experto. Genera contenido educativo completo y detallado para una lección.
 
-// **Información de la lección:**
-// - Título de la lección: "${lessonTitle}"
-// - Módulo: "${moduleTitle}"
-// - Curso: "${courseTitle}"
+**Información de la lección:**
+- Título de la lección: "${lessonTitle}"
+- Módulo: "${moduleTitle}"
+- Curso: "${courseTitle}"
 
-// **Instrucciones:**
-// Crea contenido educativo en formato Markdown que incluya:
-// - Introducción y objetivos de la lección
-// - Explicaciones conceptuales claras
-// - Ejemplos prácticos (incluye código si es relevante)
-// - Puntos clave o resumen
-// - Ejercicios o actividades sugeridas (si aplica)
+**Instrucciones:**
+Crea contenido educativo en formato Markdown que incluya:
+- Introducción y objetivos de la lección
+- Explicaciones conceptuales claras
+- Ejemplos prácticos (incluye código si es relevante)
+- Puntos clave o resumen
+- Ejercicios o actividades sugeridas (si aplica)
 
-// El contenido debe ser didáctico, bien estructurado y apropiado para el nivel del curso.
-// Usa formato Markdown con encabezados, listas, código y otros elementos de formato.`;
+El contenido debe ser didáctico, bien estructurado y apropiado para el nivel del curso.
+Usa formato Markdown con encabezados, listas, código y otros elementos de formato.`;
 
 // const prompt = `Eres un instructor experto en creación de contenido educativo. Genera una lección completa basada en los siguientes parámetros, siguiendo estrictamente las instrucciones de formato:
 
@@ -662,58 +662,58 @@ app.post('/api/gemini/generate-lesson-content', authenticateToken, async (req, r
 
 // Recuerda: solo texto plano, excepto para bloques de código específicos.`;
 console.log("Lesson tittles",lessonTitle)
-console.log("module tittles",lessonTitle)
-console.log("course tittles",lessonTitle)
+console.log("module tittles",moduleTitle)
+console.log("course tittles",courseTitle)
 
-const prompt = `Eres un instructor experto en creación de contenido educativo para la siguiente leccion
-**Información de la lección:**
-# Titulo:  \${lessonTitle}
-### MODULO:   \${moduleTitle}
-### CURSO:    \${courseTitle}
-**Fin de informacion**
+// const prompt = `Eres un instructor experto en creación de contenido educativo para la siguiente leccion
+// **Información de la lección:**
+// # Titulo:  \${lessonTitle}
+// ### MODULO:   \${moduleTitle}
+// ### CURSO:    \${courseTitle}
+// **Fin de informacion**
 
-Genera una lección completa basada en estos parámetros que te dimos en la informacion de la leccion y las siguientes pautas:
+// Genera una lección completa basada en estos parámetros que te dimos en la informacion de la leccion y las siguientes pautas:
 
-**Instrucciones CRÍTICAS:**
-1. Para texto normal: NO USES MARKDOWN (nada de \`\`\`, o formatos md)
-2. Para código: SIEMPRE usa \`\`\`language (ej. \`\`\`js) alrededor del código
-3. Estructura visual con:
-   - Saltos de línea dobles para párrafos
-   - Guiones (-) para listas
-   - Usa # para denotar titulos principales ejemplo '# Titulo1'
-   - Usa ## para denotar subtitulos en el texto '## Subtitulo1'
-   - Usa ### para denotar subtitulos pequeños en el texto '### SubtituloPequeño1' generalmente se usan para sub-secciones dentro de un subtitulo tipo ##
-   - Negritas con ** para énfasis en cosas importantes que quieres resaltar
+// **Instrucciones CRÍTICAS:**
+// 1. Para texto normal: NO USES MARKDOWN (nada de \`\`\`, o formatos md)
+// 2. Para código: SIEMPRE usa \`\`\`language (ej. \`\`\`js) alrededor del código
+// 3. Estructura visual con:
+//    - Saltos de línea dobles para párrafos
+//    - Guiones (-) para listas
+//    - Usa # para denotar titulos principales ejemplo '# Titulo1'
+//    - Usa ## para denotar subtitulos en el texto '## Subtitulo1'
+//    - Usa ### para denotar subtitulos pequeños en el texto '### SubtituloPequeño1' generalmente se usan para sub-secciones dentro de un subtitulo tipo ##
+//    - Negritas con ** para énfasis en cosas importantes que quieres resaltar
 
-**ESTRUCTURA REQUERIDA:**
+// **ESTRUCTURA REQUERIDA:**
 
-# Título de la lección:  \${lessonTitle}
-## Módulo:** \${moduleTitle}
-## Curso:** \${courseTitle}
+// # Título de la lección:  \${lessonTitle}
+// ## Módulo:** \${moduleTitle}
+// ## Curso:** \${courseTitle}
 
-## INTRODUCCIÓN
-- Propósito claro de la lección
-- Objetivos de aprendizaje enumerados
+// ## INTRODUCCIÓN
+// - Propósito claro de la lección
+// - Objetivos de aprendizaje enumerados
 
-## CONTENIDO PRINCIPAL
-- Explicaciones conceptuales detalladas
-- Ejemplos prácticos (usar \`\`\` cuando sea código)
-- Diagramas o analogías cuando sean útiles
+// ## CONTENIDO PRINCIPAL
+// - Explicaciones conceptuales detalladas
+// - Ejemplos prácticos (usar \`\`\` cuando sea código)
+// - Diagramas o analogías cuando sean útiles
 
-## RESUMEN
-- Puntos clave de la lección
-- Relación con el módulo
+// ## RESUMEN
+// - Puntos clave de la lección
+// - Relación con el módulo
 
-## ACTIVIDADES
-- Ejercicios prácticos
-- Preguntas de reflexión
-- Recursos adicionales
+// ## ACTIVIDADES
+// - Ejercicios prácticos
+// - Preguntas de reflexión
+// - Recursos adicionales
 
-**ESTILO:**
-- Lenguaje claro y didáctico
-- Párrafos bien estructurados
-- Términos técnicos explicados
-- Ejemplos relevantes al nivel del curso`;
+// **ESTILO:**
+// - Lenguaje claro y didáctico
+// - Párrafos bien estructurados
+// - Términos técnicos explicados
+// - Ejemplos relevantes al nivel del curso`;
 
     const genAI = await initializeGeminiAPI();
     const response = await genAI.models.generateContent({
