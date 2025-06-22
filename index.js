@@ -608,9 +608,9 @@ app.post('/api/gemini/generate-lesson-content', authenticateToken, async (req, r
 const prompt = `Eres un instructor experto. Genera contenido educativo completo y detallado para una lección.
 
 **Información de la lección:**
-- Título de la lección: "${lessonTitle}"
-- Módulo: "${moduleTitle}"
-- Curso: "${courseTitle}"
+- Título de la lección: " ${lessonTitle} "
+- Módulo: " ${moduleTitle} "
+- Curso: " ${courseTitle} "
 
 **Instrucciones:**
 Crea contenido educativo en formato Markdown que incluya:
