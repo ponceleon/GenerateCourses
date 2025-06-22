@@ -662,7 +662,14 @@ app.post('/api/gemini/generate-lesson-content', authenticateToken, async (req, r
 
 // Recuerda: solo texto plano, excepto para bloques de código específicos.`;
 
-const prompt = `Eres un instructor experto en creación de contenido educativo. Genera una lección completa basada en estos parámetros:
+const prompt = `Eres un instructor experto en creación de contenido educativo para la siguiente leccion
+**Información de la lección:**
+# Titulo:  \${lessonTitle}
+### MODULO:   \${moduleTitle}
+### CURSO:    \${courseTitle}
+**Fin de informacion**
+
+Genera una lección completa basada en estos parámetros que te dimos en la informacion de la leccion y las siguientes pautas:
 
 **Instrucciones CRÍTICAS:**
 1. Para texto normal: NO USES MARKDOWN (nada de \`\`\`, o formatos md)
@@ -677,9 +684,6 @@ const prompt = `Eres un instructor experto en creación de contenido educativo. 
 
 **ESTRUCTURA REQUERIDA:**
 
-# \${lessonTitle}
-### MODULO:   \${moduleTitle}
-### CURSO:    \${courseTitle}
 
 ## INTRODUCCIÓN
 - Propósito claro de la lección
