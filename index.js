@@ -605,23 +605,23 @@ app.post('/api/gemini/generate-lesson-content', authenticateToken, async (req, r
     const moduleTitle = context.moduleTitle;
     const courseTitle = context.currentCourse?.titulo || context.courseId;
 
-const prompt = `Eres un instructor experto. Genera contenido educativo completo y detallado para una lección.
+// const prompt = `Eres un instructor experto. Genera contenido educativo completo y detallado para una lección.
 
-**Información de la lección:**
-- Título de la lección: "${lessonTitle}"
-- Módulo: "${moduleTitle}"
-- Curso: "${courseTitle}"
+// **Información de la lección:**
+// - Título de la lección: "${lessonTitle}"
+// - Módulo: "${moduleTitle}"
+// - Curso: "${courseTitle}"
 
-**Instrucciones:**
-Crea contenido educativo en formato Markdown que incluya:
-- Introducción y objetivos de la lección
-- Explicaciones conceptuales claras
-- Ejemplos prácticos (incluye código si es relevante)
-- Puntos clave o resumen
-- Ejercicios o actividades sugeridas (si aplica)
+// **Instrucciones:**
+// Crea contenido educativo en formato Markdown que incluya:
+// - Introducción y objetivos de la lección
+// - Explicaciones conceptuales claras
+// - Ejemplos prácticos (incluye código si es relevante)
+// - Puntos clave o resumen
+// - Ejercicios o actividades sugeridas (si aplica)
 
-El contenido debe ser didáctico, bien estructurado y apropiado para el nivel del curso.
-Usa formato Markdown con encabezados, listas, código y otros elementos de formato.`;
+// El contenido debe ser didáctico, bien estructurado y apropiado para el nivel del curso.
+// Usa formato Markdown con encabezados, listas, código y otros elementos de formato.`;
 
 
 console.log("Lesson tittles",lessonTitle)
