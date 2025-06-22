@@ -661,6 +661,9 @@ app.post('/api/gemini/generate-lesson-content', authenticateToken, async (req, r
 // - Terminología técnica explicada cuando sea necesario
 
 // Recuerda: solo texto plano, excepto para bloques de código específicos.`;
+console.log("Lesson tittles",lessonTitle)
+console.log("module tittles",lessonTitle)
+console.log("course tittles",lessonTitle)
 
 const prompt = `Eres un instructor experto en creación de contenido educativo para la siguiente leccion
 **Información de la lección:**
@@ -684,6 +687,9 @@ Genera una lección completa basada en estos parámetros que te dimos en la info
 
 **ESTRUCTURA REQUERIDA:**
 
+# Título de la lección:  \${lessonTitle}
+## Módulo:** \${moduleTitle}
+## Curso:** \${courseTitle}
 
 ## INTRODUCCIÓN
 - Propósito claro de la lección
