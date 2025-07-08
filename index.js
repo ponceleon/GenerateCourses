@@ -519,6 +519,17 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     const GEMINI_API_URL = process.env.GEMINI_API_URL;
 
+    // Obtener el nombre del usuario
+    const userName = user?.name || user?.username || 'Usuario';
+    
+    // Crear el prompt personalizado con el nombre del usuario
+    const personalizedMessage = `Eres un asistente educativo amigable y experto. El usuario con quien estás hablando se llama ${userName}. 
+    
+    IMPORTANTE: En todas tus respuestas, refiérete al usuario por su nombre "${userName}" de manera natural y personalizada. Sé cordial y usa su nombre para hacer la conversación más cercana y personal, responde en español y respondele directamente.
+    
+    Mensaje del usuario: ${message}`;
+
+    
     const response = await fetch(
       `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
       {
@@ -531,7 +542,7 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
             {
               parts: [
                 {
-                  text: message,
+                  text: personalizedMessage,
                 },
               ],
             },
@@ -635,9 +646,9 @@ El contenido debe ser didáctico, bien estructurado y apropiado para el nivel de
 Usa formato Markdown con encabezados, listas, código y otros elementos de formato.`;
 
 
-console.log("Lesson tittles",lessonTitle)
-console.log("module tittles",moduleTitle)
-console.log("course tittles",courseTitle)
+// console.log("Lesson tittles",lessonTitle)
+// console.log("module tittles",moduleTitle)
+// console.log("course tittles",courseTitle)
 
 // const prompt = `Eres un instructor experto. Genera contenido educativo completo y detallado para una lección llamada \${lessonTitle} , de la leccion \${moduleTitle} y del curso \${moduleTitle} .
 // **Información de la lección:**
