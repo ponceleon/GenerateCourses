@@ -535,10 +535,11 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
     if (userProfile) {
       personalizedMessage += `\n\nINFORMACIÓN DEL PERFIL DEL USUARIO:\n${userProfile}\n\nUsa esta información para personalizar mejor tus respuestas y entender mejor los intereses y contexto de ${userName}.`;
     }
-    console.log("Chat:", chat)
+    // console.log("Chat:", chat.leccion.contenido)
     // Agregamos el chat si existe
-    if (chat) {
-      personalizedMessage += `\n\nINFORMACIÓN DEL CHAT:\n${chat}\n\nUsa esta información para personalizar mejor tus respuestas y entender mejor que leccion esta tomando el usuario actualmente ${userName}.`;
+    if (chat.leccion.contenido) {
+      console.log("ENTROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
+      personalizedMessage += `\n\nINFORMACIÓN DE LA LECCION ACTUAL:\n${chat.leccion.contenido}\n\nUsa esta información para personalizar mejor tus respuestas y entender mejor que leccion esta tomando el usuario actualmente y saber que esta estudiando.`;
     }
     // const response = await fetch(
     //   `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
