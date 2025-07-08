@@ -535,7 +535,8 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
     if (userProfile) {
       personalizedMessage += `\n\nINFORMACIÓN DEL PERFIL DEL USUARIO:\n${userProfile}\n\nUsa esta información para personalizar mejor tus respuestas y entender mejor los intereses y contexto de ${userName}.`;
     }
-
+    console.log("Chat:", chat)
+    // Agregamos el chat si existe
     if (chat) {
       personalizedMessage += `\n\nINFORMACIÓN DEL CHAT:\n${chat}\n\nUsa esta información para personalizar mejor tus respuestas y entender mejor que leccion esta tomando el usuario actualmente ${userName}.`;
     }
