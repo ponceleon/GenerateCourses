@@ -499,7 +499,7 @@ app.get('/api/health', (req, res) => {
 
 app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
   try {
-    const { message, user, userProfile } = req.body;
+    const { message, user, userProfile, chat } = req.body;
 
     if (!message) {
       return res.status(400).json({
@@ -536,6 +536,9 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
       personalizedMessage += `\n\nINFORMACIÓN DEL PERFIL DEL USUARIO:\n${userProfile}\n\nUsa esta información para personalizar mejor tus respuestas y entender mejor los intereses y contexto de ${userName}.`;
     }
 
+    if (chat) {
+      personalizedMessage += `\n\nINFORMACIÓN DEL CHAT:\n${chat}\n\nUsa esta información para personalizar mejor tus respuestas y entender mejor que leccion esta tomando el usuario actualmente ${userName}.`;
+    }
     // const response = await fetch(
     //   `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
     //   {
