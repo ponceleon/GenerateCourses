@@ -525,11 +525,30 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
     // Crear el prompt personalizado con el nombre del usuario
     const personalizedMessage = `Eres un asistente educativo amigable y experto. El usuario con quien estás hablando se llama ${userName}. 
     
-    IMPORTANTE: En todas tus respuestas, refiérete al usuario por su nombre "${userName}" de manera natural y personalizada. Sé cordial y usa su nombre para hacer la conversación más cercana y personal, responde en español y respondele directamente.
-    
-    Mensaje del usuario: ${message}`;
+    IMPORTANTE: En todas tus respuestas, refiérete al usuario por su nombre "${userName}" de manera natural y personalizada. Sé cordial y usa su nombre para hacer la conversación más cercana y personal, responde en español y respondele directamente.`;
 
     
+    // const response = await fetch(
+    //   `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
+    //   {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       contents: [
+    //         {
+    //           parts: [
+    //             {
+    //               text: personalizedMessage,
+    //             },
+    //           ],
+    //         },
+    //       ],
+    //     }),
+    //   }
+    // );   
+
     const response = await fetch(
       `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
       {
@@ -538,11 +557,18 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          system_instruction: {
+            parts: [
+              {
+                text: personalizedMessage
+              }
+            ]
+          },
           contents: [
             {
               parts: [
                 {
-                  text: personalizedMessage,
+                  text: message,
                 },
               ],
             },
