@@ -521,7 +521,8 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
 
     // Obtener el nombre del usuario
     const userName = user?.name || user?.username || 'Usuario';
-    
+    userName = fullName.split(' ')[0]; // Solo el primer nombre
+
     // Crear el prompt personalizado con el nombre del usuario
     const personalizedMessage = `Eres un asistente educativo amigable y experto. El usuario con quien estás hablando se llama ${userName}. 
     
