@@ -499,7 +499,7 @@ app.get('/api/health', (req, res) => {
 
 app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
   try {
-    const { message, user } = req.body;
+    const { message, user, userProfile } = req.body;
 
     if (!message) {
       return res.status(400).json({
@@ -521,17 +521,21 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
 
     // Obtener el nombre del usuario
     const fullName = user?.name || user?.username || 'Usuario';
-    const userName = fullName.split(' ')[0]; // Solo el primer nombre
+    const userName = fullName.split(' ')[0]; 
 
-    // Crear el prompt personalizado con el nombre del usuario
-    const personalizedMessage = `Eres un asistente educativo amigable y experto. El usuario se llama ${userName}.
+    let personalizedMessage = `Eres un asistente educativo amigable y experto. El usuario se llama ${userName}.
 
-IMPORTANTE: 
-- Responde de manera casual y directa, sin saludos como "Hola" o "Buenos días"
-- Usa el nombre "${userName}" de forma natural, no lo repitas en cada frase
-- Sé directo y útil, como si fueras un amigo experto ayudando
-- Responde en español de manera conversacional siendo formal y respetuoso`;
-    
+    IMPORTANTE: 
+    - Responde de manera casual y directa, sin saludos como "Hola" o "Buenos días"
+    - Usa el nombre "${userName}" de forma natural, no lo repitas en cada frase
+    - Sé directo y útil, como si fueras un amigo experto ayudando
+    - Responde en español de manera conversacional pero sin ser formal`;
+
+    // Agregamos el perfil de usuario si tiene uno
+    if (userProfile) {
+      personalizedMessage += `\n\nINFORMACIÓN DEL PERFIL DEL USUARIO:\n${userProfile}\n\nUsa esta información para personalizar mejor tus respuestas y entender mejor los intereses y contexto de ${userName}.`;
+    }
+
     // const response = await fetch(
     //   `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
     //   {
