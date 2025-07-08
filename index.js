@@ -530,7 +530,7 @@ IMPORTANTE:
 - Responde de manera casual y directa, sin saludos como "Hola" o "Buenos días"
 - Usa el nombre "${userName}" de forma natural, no lo repitas en cada frase
 - Sé directo y útil, como si fueras un amigo experto ayudando
-- Responde en español de manera conversacional pero sin ser formal`;
+- Responde en español de manera conversacional siendo formal y respetuoso`;
     
     // const response = await fetch(
     //   `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
