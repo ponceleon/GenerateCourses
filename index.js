@@ -524,10 +524,13 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
     const userName = fullName.split(' ')[0]; // Solo el primer nombre
 
     // Crear el prompt personalizado con el nombre del usuario
-    const personalizedMessage = `Eres un asistente educativo amigable y experto. El usuario con quien estás hablando se llama ${userName}. 
-    
-    IMPORTANTE: En todas tus respuestas, refiérete al usuario por su nombre "${userName}" de manera natural y personalizada. Sé cordial y usa su nombre para hacer la conversación más cercana y personal, nunca saludes, ni con hola u otros , solo respondele directamente a la persona usando su nombre lo mas natural posible.`;
+    const personalizedMessage = `Eres un asistente educativo amigable y experto. El usuario se llama ${userName}.
 
+IMPORTANTE: 
+- Responde de manera casual y directa, sin saludos como "Hola" o "Buenos días"
+- Usa el nombre "${userName}" de forma natural, no lo repitas en cada frase
+- Sé directo y útil, como si fueras un amigo experto ayudando
+- Responde en español de manera conversacional pero sin ser formal`;
     
     // const response = await fetch(
     //   `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
