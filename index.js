@@ -797,13 +797,6 @@ app.post('/api/gemini/generate-summary', authenticateToken, async (req, res) => 
   try {
     const { type, data, user } = req.body;
 
-    // return res.json({ 
-    //   success: true, 
-    //   type: type,
-    //   data: data,
-    //   user: user
-    // });
-
     if (!type || !data) {
       return res.status(400).json({ 
         success: false, 
@@ -953,14 +946,14 @@ INSTRUCCIONES CRÍTICAS:
     if (!generatedSummary) {
       throw new Error('La API de Gemini no devolvió contenido.');
     }
-
+    console.log("response", response);
     const logData = {
-      modelo: response.modelVersion,
-      tokens_de_entrada: response.usageMetadata ? response.usageMetadata.promptTokenCount : "No disponible",
-      tokens_de_salida: response.usageMetadata ? response.usageMetadata.candidatesTokenCount : "No disponible",
+      modelo: responseData.modelVersion,
+      tokens_de_entrada: responseData.usageMetadata ? responseData.usageMetadata.promptTokenCount : "No disponible",
+      tokens_de_salida: responseData.usageMetadata ? responseData.usageMetadata.candidatesTokenCount : "No disponible",
       user: user?.id ? user.id : "Desconocido",
       userdata: user ? user : "Desconocido",
-      description: `Generación de resumen de ${summaryType}`,
+      description: `Generación de resumen de ${summaryType} acerca de: "${principlaTitle}"`,
       status: 'success',
       url: req.originalUrl,
       headers_sended: "header de entrada",
@@ -975,7 +968,7 @@ INSTRUCCIONES CRÍTICAS:
       success: true,
       summary: generatedSummary,
       type: type,
-      // logData: logData 
+      logData: logData 
     });
 
   } catch (error) {
