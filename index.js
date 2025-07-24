@@ -796,7 +796,14 @@ Usa formato Markdown con encabezados, listas, código y otros elementos de forma
 app.post('/api/gemini/generate-summary', authenticateToken, async (req, res) => {
   try {
     const { type, data, user } = req.body;
-    
+
+    // return res.json({ 
+    //   success: true, 
+    //   type: type,
+    //   data: data,
+    //   user: user
+    // });
+
     if (!type || !data) {
       return res.status(400).json({ 
         success: false, 
@@ -814,6 +821,10 @@ app.post('/api/gemini/generate-summary', authenticateToken, async (req, res) => 
     let prompt = '';
     let summaryType = '';
 
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    const GEMINI_API_URL = process.env.GEMINI_API_URL;
+    let responseData = '';
+
     if (type === 'course') {
       summaryType = 'curso';
       const courseTitle = data.course_title || data.titulo || 'Curso';
@@ -827,50 +838,52 @@ app.post('/api/gemini/generate-summary', authenticateToken, async (req, res) => 
         }).join('\n');
       }
 
-      prompt = `Eres un experto en análisis educativo. Genera un resumen ejecutivo completo y atractivo para un curso.
+      prompt = `Eres un narrador experto que crea contenido para shorts educativos. Necesito que generes un resumen de una lección en UN SOLO PÁRRAFO continuo, sin saltos de línea, sin títulos, sin subtítulos, sin comillas, sin símbolos especiales, solo texto plano para narrar.
 
-**INFORMACIÓN DEL CURSO:**
-- Título: "${courseTitle}"
-- Número de módulos: ${modules.length}
-- Módulos del curso:
-${modulesInfo}
+INSTRUCCIONES CRÍTICAS:
+- Genera UN SOLO PÁRRAFO continuo, sin saltos de línea
+- NO uses títulos, subtítulos, viñetas, comillas, asteriscos, guiones, ni menciones nada de que estas haciendo un resumen 
+- NO uses símbolos especiales como #, *, -, •
+- Comienza con un saludo motivador y dinámico como "¡Hola estudiante! En esta lección vas a descubrir" o "¿Sabías que puedes aprender" o "Prepárate para dominar" o "En este episodio aprenderás"
+- Explica qué van a aprender, por qué es importante, qué conceptos clave cubrirán, qué podrán hacer después
+- Usa lenguaje motivador, directo y conversacional
+- Enfócate en el valor práctico y la aplicación real
+- Termina con una motivación como "No te pierdas esta oportunidad de crecer" o "Tu conocimiento está a un paso" o "El aprendizaje te espera"
+- Máximo 240 palabras
+- Solo texto plano, nada más, JAMAS MENCIONES NADA DE RESUMENES O SUBTITULOS ESTAS NARRANDO UN VIDEO`;
 
-**INSTRUCCIONES PARA EL RESUMEN:**
-Crea un resumen ejecutivo que incluya:
-
-1. **Resumen Ejecutivo** (2-3 párrafos):
-   - Descripción general del curso
-   - Beneficios principales para el estudiante
-   - Público objetivo
-
-2. **Estructura del Curso**:
-   - Lista de módulos con descripción breve
-   - Número total de lecciones
-   - Tiempo estimado de duración
-
-3. **Objetivos de Aprendizaje**:
-   - 3-5 objetivos principales que el estudiante logrará
-   - Habilidades que desarrollará
-
-4. **Público Objetivo**:
-   - Perfil ideal del estudiante
-   - Prerrequisitos (si aplica)
-
-5. **Metodología**:
-   - Enfoque de enseñanza
-   - Recursos y herramientas utilizadas
-
-6. **Resultados Esperados**:
-   - Qué podrá hacer el estudiante al finalizar
-   - Aplicaciones prácticas del conocimiento
-
-**FORMATO:**
-- Usa lenguaje claro y motivador
-- Incluye viñetas para mejor legibilidad
-- Mantén un tono profesional pero accesible
-- Enfócate en el valor y beneficios para el estudiante
-- Usa negritas (**) para destacar puntos importantes`;
-
+    const response = await fetch(
+      `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [
+              {
+                text: prompt
+              }
+            ]
+          },
+          contents: [
+            {
+              parts: [
+                {
+                  text: `INFORMACIÓN DEL CURSO:
+                          Título: ${courseTitle}
+                          Módulos: ${modulesInfo}
+                          Total de módulos: ${modules.length}`,
+                },
+              ],
+            },
+          ],
+        }),
+      }
+    ); 
+    responseData = await response.json();
+    
     } else if (type === 'lesson') {
       summaryType = 'lección';
       const lessonTitle = data.title || data.titulo || 'Lección';
@@ -878,54 +891,54 @@ Crea un resumen ejecutivo que incluya:
       const moduleTitle = data.modulo || data.module_title || 'Módulo';
       const courseTitle = data.curso || data.course_title || 'Curso';
 
-      prompt = `Eres un experto en análisis educativo. Genera un resumen ejecutivo completo para una lección específica.
 
-**INFORMACIÓN DE LA LECCIÓN:**
-- Título: "${lessonTitle}"
-- Módulo: "${moduleTitle}"
-- Curso: "${courseTitle}"
-- Contenido de la lección:
-${lessonContent.substring(0, 2000)}${lessonContent.length > 2000 ? '...' : ''}
+      prompt = `Eres un narrador experto que crea contenido para shorts educativos. Necesito que generes un resumen de una lección en UN SOLO PÁRRAFO continuo, sin saltos de línea, sin títulos, sin subtítulos, sin comillas, sin símbolos especiales, solo texto plano para narrar.
 
-**INSTRUCCIONES PARA EL RESUMEN:**
-Crea un resumen ejecutivo que incluya:
 
-1. **Resumen Ejecutivo** (1-2 párrafos):
-   - Descripción general de la lección
-   - Propósito y objetivos principales
-   - Relevancia dentro del módulo y curso
 
-2. **Contenido Principal**:
-   - Temas clave cubiertos
-   - Conceptos fundamentales explicados
-   - Ejemplos o casos prácticos incluidos
+INSTRUCCIONES CRÍTICAS:
+- Genera UN SOLO PÁRRAFO continuo, sin saltos de línea
+- NO uses títulos, subtítulos, viñetas, comillas, asteriscos, guiones
+- NO uses símbolos especiales como #, *, -, •
+- Comienza con un saludo motivador y dinámico como "¡Hola estudiante! En esta lección vas a descubrir" o "¿Sabías que puedes aprender" o "Prepárate para dominar" o "En este episodio aprenderás"
+- Explica qué van a aprender, por qué es importante, qué conceptos clave cubrirán, qué podrán hacer después
+- Usa lenguaje motivador, directo y conversacional
+- Enfócate en el valor práctico y la aplicación real
+- Termina con una motivación como "No te pierdas esta oportunidad de crecer" o "Tu conocimiento está a un paso" o "El aprendizaje te espera"
+- Solo texto plano, nada más, JAMAS MENCIONES NADA DE RESUMENES O SUBTITULOS ESTAS NARRANDO UN VIDEO`;
 
-3. **Objetivos de Aprendizaje**:
-   - 3-5 objetivos específicos de la lección
-   - Habilidades que desarrollará el estudiante
-
-4. **Puntos Clave**:
-   - Conceptos más importantes
-   - Información crítica para recordar
-   - Aplicaciones prácticas
-
-5. **Duración y Complejidad**:
-   - Tiempo estimado de estudio
-   - Nivel de dificultad
-   - Prerrequisitos específicos
-
-6. **Actividades y Recursos**:
-   - Ejercicios incluidos
-   - Recursos adicionales mencionados
-   - Evaluaciones o prácticas
-
-**FORMATO:**
-- Usa lenguaje claro y directo
-- Incluye viñetas para mejor organización
-- Mantén un tono educativo pero accesible
-- Enfócate en el valor práctico del contenido
-- Usa negritas (**) para destacar conceptos importantes
-- JAMAS USES NINGUN TIPO DE COMILLAS`;
+      const response = await fetch(
+        `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            system_instruction: {
+              parts: [
+                {
+                  text: prompt
+                }
+              ]
+            },
+            contents: [
+              {
+                parts: [
+                  {
+                    text: `INFORMACIÓN DE LA LECCIÓN:
+                            Título: ${lessonTitle}
+                            Módulo: ${moduleTitle}
+                            Curso: ${courseTitle}
+                            Contenido: ${lessonContent.substring(0, 1500)}${lessonContent.length > 1500 ? '...' : ''}`,
+                  },
+                ],
+              },
+            ],
+          }),
+        }
+      ); 
+      responseData = await response.json();
 
     } else {
       return res.status(400).json({ 
@@ -934,39 +947,33 @@ Crea un resumen ejecutivo que incluya:
       });
     }
 
-    const genAI = await initializeGeminiAPI();
-    const response = await genAI.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: prompt,
-    });
-
-    const generatedSummary = response.text;
+    const generatedSummary = responseData.candidates[0].content.parts[0].text;
     if (!generatedSummary) {
       throw new Error('La API de Gemini no devolvió contenido.');
     }
 
-    const logData = {
-      modelo: response.modelVersion,
-      tokens_de_entrada: response.usageMetadata ? response.usageMetadata.promptTokenCount : "No disponible",
-      tokens_de_salida: response.usageMetadata ? response.usageMetadata.candidatesTokenCount : "No disponible",
-      user: user?.id ? user.id : "Desconocido",
-      userdata: user ? user : "Desconocido",
-      description: `Generación de resumen de ${summaryType}`,
-      status: 'success',
-      url: req.originalUrl,
-      headers_sended: "header de entrada",
-      request_json: req.body,
-      headers_received: "header de salida",
-      response_LLM_json: generatedSummary
-    };
+    // const logData = {
+    //   modelo: response.modelVersion,
+    //   tokens_de_entrada: response.usageMetadata ? response.usageMetadata.promptTokenCount : "No disponible",
+    //   tokens_de_salida: response.usageMetadata ? response.usageMetadata.candidatesTokenCount : "No disponible",
+    //   user: user?.id ? user.id : "Desconocido",
+    //   userdata: user ? user : "Desconocido",
+    //   description: `Generación de resumen de ${summaryType}`,
+    //   status: 'success',
+    //   url: req.originalUrl,
+    //   headers_sended: "header de entrada",
+    //   request_json: req.body,
+    //   headers_received: "header de salida",
+    //   response_LLM_json: generatedSummary
+    // };
 
-    logs.logGeminiAPI(logData, 123456);
+    // logs.logGeminiAPI(logData, 123456);
 
     return res.json({ 
       success: true,
       summary: generatedSummary,
       type: type,
-      logData: logData 
+      // logData: logData 
     });
 
   } catch (error) {
