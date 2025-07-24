@@ -824,12 +824,14 @@ app.post('/api/gemini/generate-summary', authenticateToken, async (req, res) => 
     const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
     const GEMINI_API_URL = process.env.GEMINI_API_URL;
     let responseData = '';
+    let response = '';
+    let principlaTitle = '';
 
     if (type === 'course') {
       summaryType = 'curso';
       const courseTitle = data.course_title || data.titulo || 'Curso';
       const modules = data.modules || [];
-      
+      principlaTitle = courseTitle;
       let modulesInfo = '';
       if (modules.length > 0) {
         modulesInfo = modules.map((module, index) => {
@@ -852,7 +854,7 @@ INSTRUCCIONES CRÍTICAS:
 - Máximo 240 palabras
 - Solo texto plano, nada más, JAMAS MENCIONES NADA DE RESUMENES O SUBTITULOS ESTAS NARRANDO UN VIDEO`;
 
-    const response = await fetch(
+     response = await fetch(
       `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
       {
         method: 'POST',
@@ -890,7 +892,7 @@ INSTRUCCIONES CRÍTICAS:
       const lessonContent = data.content || data.contenido || '';
       const moduleTitle = data.modulo || data.module_title || 'Módulo';
       const courseTitle = data.curso || data.course_title || 'Curso';
-
+      principlaTitle = lessonTitle;
 
       prompt = `Eres un narrador experto que crea contenido para shorts educativos. Necesito que generes un resumen de una lección en UN SOLO PÁRRAFO continuo, sin saltos de línea, sin títulos, sin subtítulos, sin comillas, sin símbolos especiales, solo texto plano para narrar.
 
@@ -907,7 +909,7 @@ INSTRUCCIONES CRÍTICAS:
 - Termina con una motivación como "No te pierdas esta oportunidad de crecer" o "Tu conocimiento está a un paso" o "El aprendizaje te espera"
 - Solo texto plano, nada más, JAMAS MENCIONES NADA DE RESUMENES O SUBTITULOS ESTAS NARRANDO UN VIDEO`;
 
-      const response = await fetch(
+       response = await fetch(
         `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
         {
           method: 'POST',
@@ -952,22 +954,22 @@ INSTRUCCIONES CRÍTICAS:
       throw new Error('La API de Gemini no devolvió contenido.');
     }
 
-    // const logData = {
-    //   modelo: response.modelVersion,
-    //   tokens_de_entrada: response.usageMetadata ? response.usageMetadata.promptTokenCount : "No disponible",
-    //   tokens_de_salida: response.usageMetadata ? response.usageMetadata.candidatesTokenCount : "No disponible",
-    //   user: user?.id ? user.id : "Desconocido",
-    //   userdata: user ? user : "Desconocido",
-    //   description: `Generación de resumen de ${summaryType}`,
-    //   status: 'success',
-    //   url: req.originalUrl,
-    //   headers_sended: "header de entrada",
-    //   request_json: req.body,
-    //   headers_received: "header de salida",
-    //   response_LLM_json: generatedSummary
-    // };
+    const logData = {
+      modelo: response.modelVersion,
+      tokens_de_entrada: response.usageMetadata ? response.usageMetadata.promptTokenCount : "No disponible",
+      tokens_de_salida: response.usageMetadata ? response.usageMetadata.candidatesTokenCount : "No disponible",
+      user: user?.id ? user.id : "Desconocido",
+      userdata: user ? user : "Desconocido",
+      description: `Generación de resumen de ${summaryType}`,
+      status: 'success',
+      url: req.originalUrl,
+      headers_sended: "header de entrada",
+      request_json: req.body,
+      headers_received: "header de salida",
+      response_LLM_json: generatedSummary
+    };
 
-    // logs.logGeminiAPI(logData, 123456);
+    logs.logGeminiAPI(logData, 123456);
 
     return res.json({ 
       success: true,
