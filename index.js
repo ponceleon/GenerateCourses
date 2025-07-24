@@ -538,7 +538,6 @@ app.post('/api/gemini/chat', authenticateToken, async (req, res) => {
     // console.log("Chat:", chat.leccion.contenido)
     // Agregamos el chat si existe
     if (chat.leccion.contenido) {
-      console.log("ENTROOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
       personalizedMessage += `\n\nINFORMACIÓN DE LA LECCION ACTUAL:\n${chat.leccion.contenido}\n\nUsa esta información para personalizar mejor tus respuestas y entender mejor que leccion esta tomando el usuario actualmente y saber que esta estudiando.`;
     }
     // const response = await fetch(
@@ -794,3 +793,192 @@ Usa formato Markdown con encabezados, listas, código y otros elementos de forma
 });
 
 
+app.post('/api/gemini/generate-summary', authenticateToken, async (req, res) => {
+  try {
+    const { type, data, user } = req.body;
+    
+    if (!type || !data) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Se requiere especificar "type" (course/lesson) y "data" (contenido a resumir)' 
+      });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Configuración de API de Gemini incompleta en el servidor.' 
+      });
+    }
+
+    let prompt = '';
+    let summaryType = '';
+
+    if (type === 'course') {
+      summaryType = 'curso';
+      const courseTitle = data.course_title || data.titulo || 'Curso';
+      const modules = data.modules || [];
+      
+      let modulesInfo = '';
+      if (modules.length > 0) {
+        modulesInfo = modules.map((module, index) => {
+          const lessonCount = module.lessons ? module.lessons.length : 0;
+          return `${index + 1}. **${module.module_title}** (${lessonCount} lecciones)`;
+        }).join('\n');
+      }
+
+      prompt = `Eres un experto en análisis educativo. Genera un resumen ejecutivo completo y atractivo para un curso.
+
+**INFORMACIÓN DEL CURSO:**
+- Título: "${courseTitle}"
+- Número de módulos: ${modules.length}
+- Módulos del curso:
+${modulesInfo}
+
+**INSTRUCCIONES PARA EL RESUMEN:**
+Crea un resumen ejecutivo que incluya:
+
+1. **Resumen Ejecutivo** (2-3 párrafos):
+   - Descripción general del curso
+   - Beneficios principales para el estudiante
+   - Público objetivo
+
+2. **Estructura del Curso**:
+   - Lista de módulos con descripción breve
+   - Número total de lecciones
+   - Tiempo estimado de duración
+
+3. **Objetivos de Aprendizaje**:
+   - 3-5 objetivos principales que el estudiante logrará
+   - Habilidades que desarrollará
+
+4. **Público Objetivo**:
+   - Perfil ideal del estudiante
+   - Prerrequisitos (si aplica)
+
+5. **Metodología**:
+   - Enfoque de enseñanza
+   - Recursos y herramientas utilizadas
+
+6. **Resultados Esperados**:
+   - Qué podrá hacer el estudiante al finalizar
+   - Aplicaciones prácticas del conocimiento
+
+**FORMATO:**
+- Usa lenguaje claro y motivador
+- Incluye viñetas para mejor legibilidad
+- Mantén un tono profesional pero accesible
+- Enfócate en el valor y beneficios para el estudiante
+- Usa negritas (**) para destacar puntos importantes`;
+
+    } else if (type === 'lesson') {
+      summaryType = 'lección';
+      const lessonTitle = data.title || data.titulo || 'Lección';
+      const lessonContent = data.content || data.contenido || '';
+      const moduleTitle = data.modulo || data.module_title || 'Módulo';
+      const courseTitle = data.curso || data.course_title || 'Curso';
+
+      prompt = `Eres un experto en análisis educativo. Genera un resumen ejecutivo completo para una lección específica.
+
+**INFORMACIÓN DE LA LECCIÓN:**
+- Título: "${lessonTitle}"
+- Módulo: "${moduleTitle}"
+- Curso: "${courseTitle}"
+- Contenido de la lección:
+${lessonContent.substring(0, 2000)}${lessonContent.length > 2000 ? '...' : ''}
+
+**INSTRUCCIONES PARA EL RESUMEN:**
+Crea un resumen ejecutivo que incluya:
+
+1. **Resumen Ejecutivo** (1-2 párrafos):
+   - Descripción general de la lección
+   - Propósito y objetivos principales
+   - Relevancia dentro del módulo y curso
+
+2. **Contenido Principal**:
+   - Temas clave cubiertos
+   - Conceptos fundamentales explicados
+   - Ejemplos o casos prácticos incluidos
+
+3. **Objetivos de Aprendizaje**:
+   - 3-5 objetivos específicos de la lección
+   - Habilidades que desarrollará el estudiante
+
+4. **Puntos Clave**:
+   - Conceptos más importantes
+   - Información crítica para recordar
+   - Aplicaciones prácticas
+
+5. **Duración y Complejidad**:
+   - Tiempo estimado de estudio
+   - Nivel de dificultad
+   - Prerrequisitos específicos
+
+6. **Actividades y Recursos**:
+   - Ejercicios incluidos
+   - Recursos adicionales mencionados
+   - Evaluaciones o prácticas
+
+**FORMATO:**
+- Usa lenguaje claro y directo
+- Incluye viñetas para mejor organización
+- Mantén un tono educativo pero accesible
+- Enfócate en el valor práctico del contenido
+- Usa negritas (**) para destacar conceptos importantes
+- JAMAS USES NINGUN TIPO DE COMILLAS`;
+
+    } else {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'El tipo debe ser "course" o "lesson"' 
+      });
+    }
+
+    const genAI = await initializeGeminiAPI();
+    const response = await genAI.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: prompt,
+    });
+
+    const generatedSummary = response.text;
+    if (!generatedSummary) {
+      throw new Error('La API de Gemini no devolvió contenido.');
+    }
+
+    const logData = {
+      modelo: response.modelVersion,
+      tokens_de_entrada: response.usageMetadata ? response.usageMetadata.promptTokenCount : "No disponible",
+      tokens_de_salida: response.usageMetadata ? response.usageMetadata.candidatesTokenCount : "No disponible",
+      user: user?.id ? user.id : "Desconocido",
+      userdata: user ? user : "Desconocido",
+      description: `Generación de resumen de ${summaryType}`,
+      status: 'success',
+      url: req.originalUrl,
+      headers_sended: "header de entrada",
+      request_json: req.body,
+      headers_received: "header de salida",
+      response_LLM_json: generatedSummary
+    };
+
+    logs.logGeminiAPI(logData, 123456);
+
+    return res.json({ 
+      success: true,
+      summary: generatedSummary,
+      type: type,
+      logData: logData 
+    });
+
+  } catch (error) {
+    console.error('Error al generar resumen:', error);
+    let errorMessage = 'Error al generar el resumen.';
+    if (error.message) errorMessage += ` Detalles: ${error.message}`;
+    if (error.message && (error.message.toLowerCase().includes('api key') || error.message.toLowerCase().includes('gemini'))) {
+      errorMessage = 'Ocurrió un problema con el servicio de generación de resúmenes. Inténtalo más tarde.';
+    }
+    return res.status(500).json({ 
+      success: false, 
+      error: errorMessage 
+    });
+  }
+});
